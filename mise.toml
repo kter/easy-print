@@ -1,0 +1,7 @@
+[tools]
+node = "22"
+terraform = "1.10"
+awscli = "latest"
+
+[settings]
+experimental = true

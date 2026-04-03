@@ -1,0 +1,21 @@
+.print-btn {
+  padding: 8px 16px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #374151;
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.print-btn:hover {
+  background-color: #f3f4f6;
+}
+
+@media print {
+  .print-btn {
+    display: none;
+  }
+}

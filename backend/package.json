@@ -1,0 +1,39 @@
+{
+  "name": "easy-print-backend",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "build:edge": "node esbuild.config.mjs --edge",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "test:unit": "vitest run tests/unit",
+    "test:unit:watch": "vitest tests/unit",
+    "test:integration": "vitest run tests/integration"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.823.0",
+    "@aws-sdk/client-dynamodb": "^3.823.0",
+    "@aws-sdk/lib-dynamodb": "^3.823.0",
+    "@mozilla/readability": "^0.5.0",
+    "jsdom": "^26.1.0",
+    "turndown": "^7.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/aws-lambda": "^8.10.152",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^24.12.0",
+    "@types/turndown": "^5.0.5",
+    "esbuild": "^0.25.5",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.5",
+    "globals": "^17.4.0",
+    "prettier": "^3.5.3",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.57.0",
+    "vitest": "^3.2.3"
+  }
+}

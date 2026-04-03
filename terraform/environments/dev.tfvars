@@ -1,0 +1,5 @@
+environment        = "dev"
+aws_profile        = "dev"
+domain_name        = "print.dev.devtools.site"
+api_domain_name    = "api.print.dev.devtools.site"
+hosted_zone_domain = "dev.devtools.site"

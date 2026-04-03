@@ -1,0 +1,15 @@
+frontend/node_modules/
+frontend/dist/
+backend/node_modules/
+backend/dist/
+backend.zip
+ogp-edge.zip
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+.vscode/
+.idea/
+.DS_Store
+*.log
+coverage/

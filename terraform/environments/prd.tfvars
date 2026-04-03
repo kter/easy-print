@@ -1,0 +1,5 @@
+environment        = "prd"
+aws_profile        = "prd"
+domain_name        = "print.devtools.site"
+api_domain_name    = "api.print.devtools.site"
+hosted_zone_domain = "devtools.site"
