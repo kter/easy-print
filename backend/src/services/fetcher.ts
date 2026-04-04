@@ -14,6 +14,14 @@ const PRIVATE_IP_PATTERNS = [
 
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RESPONSE_SIZE = 5 * 1024 * 1024; // 5MB
+const TLS_ERROR_CODES = new Set([
+  'CERT_HAS_EXPIRED',
+  'DEPTH_ZERO_SELF_SIGNED_CERT',
+  'ERR_TLS_CERT_ALTNAME_INVALID',
+  'SELF_SIGNED_CERT_IN_CHAIN',
+  'UNABLE_TO_GET_ISSUER_CERT',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+]);
 
 export class FetchError extends Error {
   constructor(
@@ -23,6 +31,20 @@ export class FetchError extends Error {
     super(message);
     this.name = 'FetchError';
   }
+}
+
+function getNestedErrorCode(err: unknown): string | undefined {
+  if (!err || typeof err !== 'object') return undefined;
+  const maybeErr = err as { code?: unknown; cause?: unknown };
+  if (typeof maybeErr.code === 'string') return maybeErr.code;
+  return getNestedErrorCode(maybeErr.cause);
+}
+
+function getNestedErrorMessage(err: unknown): string | undefined {
+  if (!err || typeof err !== 'object') return undefined;
+  const maybeErr = err as { message?: unknown; cause?: unknown };
+  if (typeof maybeErr.message === 'string' && maybeErr.message) return maybeErr.message;
+  return getNestedErrorMessage(maybeErr.cause);
 }
 
 function validateUrl(rawUrl: string): URL {
@@ -84,7 +106,12 @@ export async function fetchPage(rawUrl: string): Promise<string> {
     if (err instanceof Error && err.name === 'AbortError') {
       throw new FetchError(`Request timed out after ${REQUEST_TIMEOUT_MS}ms`);
     }
-    throw new FetchError(`Failed to fetch URL: ${(err as Error).message}`);
+    const errorCode = getNestedErrorCode(err);
+    if (errorCode && TLS_ERROR_CODES.has(errorCode)) {
+      const detail = getNestedErrorMessage((err as { cause?: unknown }).cause) ?? errorCode;
+      throw new FetchError(`TLS certificate validation failed: ${detail}`, 400);
+    }
+    throw new FetchError(`Failed to fetch URL: ${getNestedErrorMessage(err) ?? 'Unknown error'}`);
   } finally {
     clearTimeout(timeoutId);
   }

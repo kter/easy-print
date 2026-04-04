@@ -194,6 +194,22 @@ describe('handler', () => {
     const result = await handler(event);
     expect(result.statusCode).toBe(502);
   });
+
+  it('returns 400 when upstream TLS certificate validation fails', async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(
+      Object.assign(new TypeError('fetch failed'), {
+        cause: Object.assign(new Error('unable to get local issuer certificate'), {
+          code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+        }),
+      }),
+    );
+
+    const event = makeEvent('/api/render', { url: 'https://example.com' });
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(400);
+    expect(result.body).toContain('TLS certificate validation failed');
+  });
 });
 
 void mockDynamoSend;

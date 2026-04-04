@@ -104,4 +104,20 @@ describe('fetchPage', () => {
 
     await expect(fetchPage('https://example.com')).rejects.toThrow(FetchError);
   });
+
+  it('maps TLS certificate failures to a client-facing FetchError', async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(
+      Object.assign(new TypeError('fetch failed'), {
+        cause: Object.assign(new Error('unable to get local issuer certificate'), {
+          code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+        }),
+      }),
+    );
+
+    await expect(fetchPage('https://example.com')).rejects.toMatchObject({
+      name: 'FetchError',
+      message: 'TLS certificate validation failed: unable to get local issuer certificate',
+      statusCode: 400,
+    });
+  });
 });
